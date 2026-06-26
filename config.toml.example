@@ -1,0 +1,50 @@
+# ──────────────────────────────────────────────
+# DLP Home — Configuration File
+# ──────────────────────────────────────────────
+#
+# Copy this file to /etc/dlp/config.toml and edit:
+#   sudo cp config.toml.example /etc/dlp/config.toml
+#
+# Environment variables (override config values):
+#   DLP_TELEGRAM_TOKEN    — Telegram bot token
+#   DLP_TELEGRAM_CHAT     — Telegram chat ID
+#   DLP_DASHBOARD_TOKEN   — Dashboard login token
+#   DLP_SYSLOG_SERVER     — Syslog server (e.g., "192.168.1.100:514")
+
+[database]
+# PostgreSQL connection string
+url = "postgres://dlp:dlp_security_2026@localhost:5432/dlp"
+
+# Maximum database connections
+max_connections = 5
+
+[dashboard]
+# Bind address for the web dashboard
+bind = "0.0.0.0"
+
+# Dashboard port
+port = 9090
+
+[monitor]
+# Directories to watch for file changes
+watch_dirs = ["/home/lab", "/tmp"]
+
+# How often to check for file changes (seconds)
+watch_interval_secs = 5
+
+# How often to scan running processes (seconds)
+process_interval_secs = 10
+
+[scanner]
+# Path to custom patterns file (TOML format)
+patterns_file = "/etc/dlp/patterns.toml"
+
+[proxy]
+# Enable HTTP/HTTPS proxy for traffic inspection
+enabled = false
+
+# Proxy bind address
+bind = "0.0.0.0"
+
+# Proxy port
+port = 8080

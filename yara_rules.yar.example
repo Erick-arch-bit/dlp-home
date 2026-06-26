@@ -1,0 +1,61 @@
+// ──────────────────────────────────────────────
+// DLP Home — YARA Rules Example
+// ──────────────────────────────────────────────
+//
+// Copy to /etc/dlp/yara_rules.yar:
+//   sudo cp yara_rules.yar.example /etc/dlp/yara_rules.yar
+
+rule CreditCardNumbers {
+    meta:
+        description = "Detect credit card numbers"
+        severity = "high"
+    strings:
+        $cc1 = /4[0-9]{12}(?:[0-9]{3})?/  // Visa
+        $cc2 = /5[1-5][0-9]{14}/            // Mastercard
+        $cc3 = /3[47][0-9]{13}/             // Amex
+    condition:
+        any of them
+}
+
+rule SSN {
+    meta:
+        description = "US Social Security Number"
+        severity = "critical"
+    strings:
+        $ssn = /\d{3}-\d{2}-\d{4}/
+    condition:
+        $ssn
+}
+
+rule PrivateKey {
+    meta:
+        description = "Private key file"
+        severity = "critical"
+    strings:
+        $pk1 = "-----BEGIN RSA PRIVATE KEY-----"
+        $pk2 = "-----BEGIN DSA PRIVATE KEY-----"
+        $pk3 = "-----BEGIN EC PRIVATE KEY-----"
+        $pk4 = "-----BEGIN OPENSSH PRIVATE KEY-----"
+    condition:
+        any of them
+}
+
+rule ConnectionString {
+    meta:
+        description = "Database connection string with credentials"
+        severity = "critical"
+    strings:
+        $cs = /(postgres|mysql|mongodb|redis):\/\/\S+:\S+@/
+    condition:
+        $cs
+}
+
+rule AWSKey {
+    meta:
+        description = "AWS Access Key"
+        severity = "critical"
+    strings:
+        $aws = /AKIA[0-9A-Z]{16}/
+    condition:
+        $aws
+}

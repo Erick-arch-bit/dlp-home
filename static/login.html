@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLP Home — Access</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08080c;--surface:#0d0d14;--border:#1a1a28;--green:#00ff41;--red:#ff3355;--text:#c8c8d0;--text2:#6b6b7a}
+html,body{height:100%;font-family:'JetBrains Mono','Fira Code','Consolas',monospace;background:var(--bg);color:var(--text);font-size:14px}
+body{display:flex;align-items:center;justify-content:center;position:relative}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,.015) 2px,rgba(0,255,65,.015) 4px);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,255,65,.03) 0%,transparent 70%);pointer-events:none}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:2rem;width:340px;position:relative;z-index:1}
+.login-box .logo{font-size:1.1rem;font-weight:700;color:var(--green);margin-bottom:.25rem;text-shadow:0 0 20px rgba(0,255,65,.2)}
+.login-box .sub{color:var(--text2);font-size:.75rem;margin-bottom:1.5rem}
+input{width:100%;background:#000;border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:4px;font-size:.82rem;font-family:inherit;outline:none;margin-bottom:.75rem;transition:border-color .15s}
+input:focus{border-color:var(--green);box-shadow:0 0 8px rgba(0,255,65,.1)}
+button{width:100%;background:transparent;border:1px solid var(--green);color:var(--green);padding:.6rem;border-radius:4px;cursor:pointer;font-size:.8rem;font-family:inherit;text-transform:uppercase;letter-spacing:.06em;transition:all .15s}
+button:hover{background:rgba(0,255,65,.1);box-shadow:0 0 12px rgba(0,255,65,.15)}
+.error{color:var(--red);font-size:.75rem;margin-top:.75rem;display:none}
+.cursor{display:inline-block;width:8px;height:1.1em;background:var(--green);animation:blink 1s step-end infinite;margin-left:4px;vertical-align:text-bottom}
+@keyframes blink{50%{opacity:0}}
+.prompt{font-size:.75rem;color:var(--text2);margin-bottom:.6rem}
+.prompt span{color:var(--green)}
+</style>
+</head>
+<body>
+<div class="login-box">
+  <div class="logo">DLP Home</div>
+  <div class="sub">Data Loss Prevention System</div>
+  <div class="prompt"><span>root@dlp</span>:~$ access --token</div>
+  <input type="password" id="token" placeholder="token" autofocus onkeydown="if(event.key==='Enter')login()">
+  <button onclick="login()">Authenticate</button>
+  <div class="error" id="error">[!] invalid token</div>
+</div>
+<script async>
+(async function() {
+  const r = await fetch('/api/summary');
+  if (r.ok) window.location.href = '/';
+})();
+function login() {
+  const token = document.getElementById('token').value;
+  fetch('/api/login?token=' + encodeURIComponent(token))
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        document.cookie = 'token=' + token + ';path=/;max-age=86400';
+        window.location.href = '/';
+      } else {
+        document.getElementById('error').style.display = 'block';
+      }
+    });
+}
+</script>
+</body>
+</html>
